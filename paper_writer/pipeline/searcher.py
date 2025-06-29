@@ -2,6 +2,7 @@ from paper_writer.pipeline.base import PipelineComponent, PaperBase
 from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
 from typing import List, Dict
+import re
 
 class SearcherGenerator(PipelineComponent):
     """Pipeline component that generates search results for each section in the outline."""
@@ -163,3 +164,29 @@ class SearcherGenerator(PipelineComponent):
                     sentences.append(line)
         
         return sentences 
+    
+    def _parse_urls_response(self, paper: PaperBase) -> List[str]:
+        """
+        从description中搜索url
+        
+        Args:
+            paper: PaperBase object
+            
+        Returns:
+            List of URL
+        """
+        if not paper.description:
+            return []
+
+        url_pattern = re.compile(r"https?://[\w\.-]+(?:/[\w\.-]*)*")
+        pos = 0
+        urls = []
+
+        while True:
+            url_match = url_pattern.search(paper.description[pos:])
+            if url_match == None:
+                break
+            pos += url_match.end()
+            urls.append(url_match.group())
+
+        return urls
