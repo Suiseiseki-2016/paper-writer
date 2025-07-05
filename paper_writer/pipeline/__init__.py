@@ -1,12 +1,12 @@
 from .base import PaperBase, PipelineComponent
 from .description import DescriptionGenerator
 from .outline import OutlineGenerator
-from .citations import CitationsGenerator
+from .searcher import SearcherGenerator
 
 __all__ = [
     'PaperBase',
     'PipelineComponent', 
     'DescriptionGenerator',
     'OutlineGenerator',
-    'CitationsGenerator'
+    'SearcherGenerator'
 ] 

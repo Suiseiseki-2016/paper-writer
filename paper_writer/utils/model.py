@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 import requests
 from pydantic import BaseModel as PydanticBaseModel, Field
 from typing import Dict, List, Optional
+from paper_writer.utils.env import load_env
 
 class ModelConfig(PydanticBaseModel):
     model_name: str
@@ -43,7 +44,8 @@ class SearchModel(BaseModel):
         response = requests.post(
             f"{self.base_url}/chat/completions",
             headers=headers,
-            json=request.model_dump()
+            json=request.model_dump(),
+            timeout=30
         )
         
         response_data = response.json()
@@ -98,13 +100,14 @@ class ComplexModel(BaseModel):
         return response.json()['choices'][0]['message']['content']
 
 def load_models() -> Dict[str, BaseModel]:
+    load_env()
     with open('models.yaml', 'r') as f:
         config = yaml.safe_load(f)
     
     models = {
-        'search': SearchModel(ModelConfig(**config['search_modeL'])),
-        'simple': SimpleModel(ModelConfig(**config['simple_modeL'])),
+        'search': SearchModel(ModelConfig(**config['search_model'])),
+        'simple': SimpleModel(ModelConfig(**config['simple_model'])),
         'complex': ComplexModel(ModelConfig(**config['complex_model']))
     }
-    
+
     return models
