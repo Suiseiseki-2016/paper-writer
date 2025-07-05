@@ -30,3 +30,11 @@ class DescriptionGenerator(PipelineComponent):
         paper.description = new_description
         
         return paper 
+if __name__=="__main__":
+    a = DescriptionGenerator()
+    paper = PaperBase()
+    paper.title = '移动机器人覆盖路径规划算法综述'
+    paper.description = '给出移动机器人覆盖路径规划算法的基本概念与应用背景，对目前主流的覆盖路径规划算法进行分类，讨论各类覆盖路径规划算法的'\
+    '发展历程与其优缺点'
+    paper = a.process(paper)
+    print(f"description:\n{paper.description}")

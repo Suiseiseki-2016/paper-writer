@@ -12,3 +12,15 @@ Please create a detailed outline that includes:
 6. Conclusion
 
 For each section, provide 3-5 main points that should be covered. 
+
+Please return a json format response like:
+{{
+"introduction":"text",
+"Literature Review":"text",
+"Methodology":"text",
+"Results and Analysis":"text",
+"Discussion":"text",
+"Conclusion":"text"
+}}
+
+Please only return JSON data without any other text.
