@@ -20,3 +20,5 @@ def load_env(env_path: Optional[str] = None) -> None:
         load_dotenv(env_path)
     
     # System environment variables are already loaded and will take precedence
+load_env()
+env = os.environ

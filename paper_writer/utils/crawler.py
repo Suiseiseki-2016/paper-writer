@@ -12,7 +12,10 @@ def crawl_url(url: str) -> str:
     返回 markdown 文本，若失败抛出异常。
     """
     resp = requests.get(url, timeout=10)
-    resp.raise_for_status()
+    try:
+        resp.raise_for_status()
+    except:
+        return ''
     content_type = resp.headers.get('Content-Type', '').lower()
     if 'application/pdf' in content_type or url.lower().endswith('.pdf'):
         # 处理 PDF

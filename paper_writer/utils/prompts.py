@@ -67,7 +67,7 @@ prompt_loader = PromptLoader()
 # Create individual variables for each prompt
 DESCRIPTION_PROMPT = prompt_loader.get_prompt("description")
 OUTLINE_PROMPT = prompt_loader.get_prompt("outline")
-CITATIONS_PROMPT = prompt_loader.get_prompt("citations")
+SEARCHER_PROMPT = prompt_loader.get_prompt("searcher")
 
 # Convenience functions
 def get_prompt(name: str) -> str:
