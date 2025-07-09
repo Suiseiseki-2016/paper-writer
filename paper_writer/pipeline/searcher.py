@@ -1,9 +1,10 @@
 from paper_writer.pipeline.base import PipelineComponent, PaperBase
 from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
+from paper_writer.utils.crawler import crawl_url
+from paper_writer.utils.cleaner import full_clean_pipeline
 from typing import List, Dict
 import re
-import json
 
 class SearcherGenerator(PipelineComponent):
     """Pipeline component that generates search results for each section in the outline."""
@@ -40,8 +41,9 @@ class SearcherGenerator(PipelineComponent):
         # Remove duplicates while preserving order
         unique_searchers = list(dict.fromkeys(all_searchers))
 
-        text = self._crawl_urls_text(unique_searchers)
-        citations = self._generate_citations_from_text(text)
+        texts = self._crawl_urls_texts(unique_searchers)
+
+        citations = self._generate_citations_from_texts(texts)
 
         # Update the paper object
         paper.citations = citations
@@ -95,12 +97,20 @@ class SearcherGenerator(PipelineComponent):
         return urls
 
     def _crawl_urls_texts(self, searchers: List[str]) -> List[str]:
-        pass
+        texts = []
+        for searcher in searchers:
+            text = crawl_url(searcher)
+            text = full_clean_pipeline(text)
+            texts.append(text)
+
+        return texts
 
     def _generate_citations_from_texts(self, texts: List[str]) -> List[str]:
+        citations = []
         for text in texts:
             citation_prompt = format_prompt("citation", text=text)
-            citations_response = self.simple_model.query(citation_prompt)
+            citation_response = self.simple_model.query(citation_prompt)
+            citations.append(citation_response)
 
         return citations
 
