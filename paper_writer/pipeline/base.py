@@ -11,7 +11,7 @@ class PaperBase(BaseModel):
         default_factory=dict, 
         description="Detailed outline for each section"
     )
-    citations: List[str] = Field(
+    references: List[str] = Field(
         default_factory=list, 
         description="List of citation references"
     )

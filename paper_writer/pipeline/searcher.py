@@ -43,10 +43,10 @@ class SearcherGenerator(PipelineComponent):
 
         texts = self._crawl_urls_texts(unique_searchers)
 
-        citations = self._generate_citations_from_texts(texts)
+        references = self._generate_references_from_texts(texts)
 
         # Update the paper object
-        paper.citations = citations
+        paper.references = references
         
         return paper
     
@@ -105,14 +105,14 @@ class SearcherGenerator(PipelineComponent):
 
         return texts
 
-    def _generate_citations_from_texts(self, texts: List[str]) -> List[str]:
-        citations = []
+    def _generate_references_from_texts(self, texts: List[str]) -> List[str]:
+        references = []
         for text in texts:
-            citation_prompt = format_prompt("citation", text=text)
-            citation_response = self.simple_model.query(citation_prompt)
-            citations.append(citation_response)
+            reference_prompt = format_prompt("reference", text=text)
+            reference_response = self.simple_model.query(reference_prompt)
+            references.append(reference_response)
 
-        return citations
+        return references
 
 if __name__=="__main__":
     a = SearcherGenerator()
@@ -154,4 +154,4 @@ By synthesizing diverse research threads, this survey aims to accelerate innovat
     '''
     paper.outline = ["Introduction:1. Definition and importance of Coverage Path Planning (CPP) in mobile robotics.\n2. Key objectives of CPP: complete coverage, obstacle avoidance, and energy efficiency.\n3. Overview of application areas such as floor cleaning, agricultural monitoring, and industrial inspection.\n4. Purpose and scope of the survey paper: systematic classification and analysis of CPP algorithms.\n5. Outline of the paper's structure and key contributions.",'Literature Review:1. Historical evolution of CPP algorithms, from early heuristic methods to modern data-driven approaches.\n2. Classification of CPP algorithms into categories: cellular decomposition, graph-based, potential field, neural network, and evolutionary algorithms.\n3. Comparative analysis of seminal works in each category, highlighting milestones and paradigm shifts.\n4. Discussion of application-specific adaptations, such as dynamic environments or multi-robot systems.\n5. Identification of gaps in existing literature and unresolved challenges in CPP research.','Methodology:1. Conceptual framing of CPP as an optimization problem, including key metrics like coverage rate and path length.\n2. Description of the review methodology: systematic collection and categorization of CPP algorithms.\n3. Criteria for comparative analysis: computational complexity, adaptability, scalability, and practical implementation.\n4. Selection of representative algorithms from each category for in-depth evaluation.\n5. Approach to synthesizing trends and emerging patterns in CPP research.']
     paper = a.process(paper)
-    print(f"citations:\n{paper.citations}")
+    print(f"references:\n{paper.references}")
