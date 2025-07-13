@@ -6,8 +6,11 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "bs4>=0.0.2",
+    "clean-text>=0.6.0",
     "markdownify>=1.1.0",
+    "pdfminer-six>=20250506",
     "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
     "pyyaml>=6.0.2",
     "requests>=2.32.4",
     "typing>=3.10.0.0",

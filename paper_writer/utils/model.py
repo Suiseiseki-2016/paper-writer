@@ -4,11 +4,12 @@ from abc import ABC, abstractmethod
 import requests
 from pydantic import BaseModel as PydanticBaseModel, Field
 from typing import Dict, List, Optional
+from paper_writer.utils.env import env
 
 class ModelConfig(PydanticBaseModel):
     model_name: str
     base_url: str
-    mdoel_api_key: str
+    model_api_key: str
 
 class Message(PydanticBaseModel):
     role: str
@@ -22,7 +23,7 @@ class BaseModel(ABC):
     def __init__(self, model_config: ModelConfig):
         self.model_name = model_config.model_name
         self.base_url = model_config.base_url
-        self.api_key = os.getenv(model_config.mdoel_api_key)
+        self.api_key = env[model_config.model_api_key]
         
     @abstractmethod
     def query(self, prompt: str) -> str:
@@ -43,7 +44,8 @@ class SearchModel(BaseModel):
         response = requests.post(
             f"{self.base_url}/chat/completions",
             headers=headers,
-            json=request.model_dump()
+            json=request.model_dump(),
+            timeout=30
         )
         
         response_data = response.json()
@@ -102,9 +104,9 @@ def load_models() -> Dict[str, BaseModel]:
         config = yaml.safe_load(f)
     
     models = {
-        'search': SearchModel(ModelConfig(**config['search_modeL'])),
-        'simple': SimpleModel(ModelConfig(**config['simple_modeL'])),
+        'search': SearchModel(ModelConfig(**config['search_model'])),
+        'simple': SimpleModel(ModelConfig(**config['simple_model'])),
         'complex': ComplexModel(ModelConfig(**config['complex_model']))
     }
-    
+
     return models
