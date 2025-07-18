@@ -59,7 +59,7 @@ class OutlineGenerator(PipelineComponent):
                 results = json.loads(json_match.group(0))
             else:
                 return []
-
+        print(f"results:\n{results}")
         for key, section in results.items():
             key = key.strip()
             section = section.strip()

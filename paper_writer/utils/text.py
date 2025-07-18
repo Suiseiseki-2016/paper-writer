@@ -1,6 +1,9 @@
 import re
 from cleantext import clean
 from html import unescape
+from typing import List
+from paper_writer.pipeline.base import ReferencePaperBase
+
 def clean_text(text: str) -> str:
     # 去除前后空白字符
     text = text.strip()

@@ -1,8 +1,8 @@
-from paper_writer.pipeline.base import PipelineComponent, PaperBase
+from paper_writer.pipeline.base import PipelineComponent, PaperBase, ReferencePaperBase
 from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
 from paper_writer.utils.crawler import crawl_url
-from paper_writer.utils.cleaner import full_clean_pipeline
+from paper_writer.utils.text import full_clean_pipeline
 from typing import List, Dict
 import re
 
@@ -13,7 +13,7 @@ class SearcherGenerator(PipelineComponent):
         super().__init__("searcher_generator")
         self.models = load_models()
         self.search_model = self.models['search']  # Using search model for searcher generation
-        self.simple_model = self.models['simple']  # Using search model for searcher generation
+        self.simple_model = self.models['simple']  # Using simple model for reference generation
 
     def process(self, paper: PaperBase) -> PaperBase:
         """
@@ -30,27 +30,22 @@ class SearcherGenerator(PipelineComponent):
         
         # Generate search results for each section
         section_searchers = {}
-        all_searchers = []
         
         for section in paper.outline:
             # Generate search results for this specific section
             section_searchers_list = self._generate_searchers_for_section(paper, section)
             section_searchers[section] = section_searchers_list
-            all_searchers.extend(section_searchers_list)
 
-        # Remove duplicates while preserving order
-        unique_searchers = list(dict.fromkeys(all_searchers))
-
-        texts = self._crawl_urls_texts(unique_searchers)
-
-        citations = self._generate_citations_from_texts(texts)
+        for section, searchers in section_searchers.items():
+            searchers = self._crawl_urls_texts(searchers)
+            section_searchers[section] = self._generate_references_from_texts(searchers)
 
         # Update the paper object
-        paper.citations = citations
+        paper.references = section_searchers
         
         return paper
     
-    def _generate_searchers_for_section(self, paper: PaperBase, section: str) -> List[str]:
+    def _generate_searchers_for_section(self, paper: PaperBase, section: str) -> List[ReferencePaperBase]:
         """
         Generate search results for a specific section.
         
@@ -70,7 +65,7 @@ class SearcherGenerator(PipelineComponent):
 
         return searchers
     
-    def _parse_urls_response(self, response: str) -> List[str]:
+    def _parse_urls_response(self, response: str) -> List[ReferencePaperBase]:
         """
         从response中搜索url
         
@@ -78,7 +73,7 @@ class SearcherGenerator(PipelineComponent):
             paper: PaperBase object
             
         Returns:
-            List of URL
+            List of ReferencePaperBase
         """
         if not response:
             return []
@@ -92,27 +87,27 @@ class SearcherGenerator(PipelineComponent):
             if url_match == None:
                 break
             pos += url_match.end()
-            urls.append(url_match.group())
+            urls.append(ReferencePaperBase(url=url_match.group()))
 
         return urls
 
-    def _crawl_urls_texts(self, searchers: List[str]) -> List[str]:
-        texts = []
+    def _crawl_urls_texts(self, searchers: List[ReferencePaperBase]) -> List[ReferencePaperBase]:
+
         for searcher in searchers:
-            text = crawl_url(searcher)
+            text = crawl_url(searcher.url)
             text = full_clean_pipeline(text)
-            texts.append(text)
+            searcher.text = text
 
-        return texts
+        return searchers
 
-    def _generate_citations_from_texts(self, texts: List[str]) -> List[str]:
-        citations = []
-        for text in texts:
-            citation_prompt = format_prompt("citation", text=text)
-            citation_response = self.simple_model.query(citation_prompt)
-            citations.append(citation_response)
+    def _generate_references_from_texts(self, searchers: List[ReferencePaperBase]) -> List[ReferencePaperBase]:
 
-        return citations
+        for searcher in searchers:
+            reference_prompt = format_prompt("reference", text=searcher.text)
+            reference_response = self.simple_model.query(reference_prompt)
+            searcher.reference = reference_response
+
+        return searchers
 
 if __name__=="__main__":
     a = SearcherGenerator()
@@ -154,4 +149,4 @@ By synthesizing diverse research threads, this survey aims to accelerate innovat
     '''
     paper.outline = ["Introduction:1. Definition and importance of Coverage Path Planning (CPP) in mobile robotics.\n2. Key objectives of CPP: complete coverage, obstacle avoidance, and energy efficiency.\n3. Overview of application areas such as floor cleaning, agricultural monitoring, and industrial inspection.\n4. Purpose and scope of the survey paper: systematic classification and analysis of CPP algorithms.\n5. Outline of the paper's structure and key contributions.",'Literature Review:1. Historical evolution of CPP algorithms, from early heuristic methods to modern data-driven approaches.\n2. Classification of CPP algorithms into categories: cellular decomposition, graph-based, potential field, neural network, and evolutionary algorithms.\n3. Comparative analysis of seminal works in each category, highlighting milestones and paradigm shifts.\n4. Discussion of application-specific adaptations, such as dynamic environments or multi-robot systems.\n5. Identification of gaps in existing literature and unresolved challenges in CPP research.','Methodology:1. Conceptual framing of CPP as an optimization problem, including key metrics like coverage rate and path length.\n2. Description of the review methodology: systematic collection and categorization of CPP algorithms.\n3. Criteria for comparative analysis: computational complexity, adaptability, scalability, and practical implementation.\n4. Selection of representative algorithms from each category for in-depth evaluation.\n5. Approach to synthesizing trends and emerging patterns in CPP research.']
     paper = a.process(paper)
-    print(f"citations:\n{paper.citations}")
+    print(f"references:\n{paper.references}")
