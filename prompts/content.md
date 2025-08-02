@@ -1,6 +1,6 @@
-Based on the following outline and text, extract a paragraph of no more than three sentences from the text that is most relevant to the outline as a citation. Please only return the extracted paragraph without any other texts. If the extracted paragraph is English, please return it in Chinese
+Based on the following outline and citations, generate a 300-500 word paragraph in Chinese. Please add a citation number, such as [1], after each citation. Please only return the paragraph without any other texts.
 
 Outline: {outline}
-Text: {paper.text}
+Citations: {citations}
 
 

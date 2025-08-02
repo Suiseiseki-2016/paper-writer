@@ -42,7 +42,11 @@ class SearcherGenerator(PipelineComponent):
 
         # Update the paper object
         paper.references = section_searchers
-        print(f"references:\n{paper.references}")
+
+        print('references:\n')
+        for value in paper.references.values():
+            for reference in value:
+                print(reference.reference)
 
         return paper
     
@@ -102,7 +106,17 @@ class SearcherGenerator(PipelineComponent):
         return searchers
 
     def _generate_references_from_texts(self, searchers: List[ReferencePaperBase]) -> List[ReferencePaperBase]:
-
+        
+        """
+        Generate references from crawled texts.
+        
+        Args:
+            searchers
+            
+        Returns:
+            List of references for the section
+        """
+                
         for searcher in searchers:
             reference_prompt = format_prompt("reference", text=searcher.text)
             reference_response = self.simple_model.query(reference_prompt)

@@ -19,10 +19,6 @@ class PaperBase(BaseModel):
     title: str = Field(default="", description="Title of the paper")
     description: str = Field(default="", description="Brief description of the paper")
     outline: List[str] = Field(default_factory=list, description="Main outline points of the paper")
-    section_outline: Dict[str, List[str]] = Field(
-        default_factory=dict, 
-        description="Detailed outline for each section"
-    )
     references: Dict[str, List[ReferencePaperBase]] = Field(
         default_factory=dict, 
         description="Dict of section: references"
@@ -35,8 +31,8 @@ class PaperBase(BaseModel):
         default="",
         description="Complete paper content"
     )
-    section_content: Dict[str, str] = Field(
-        default_factory=dict,
+    section_content: List[str] = Field(
+        default_factory=list,
         description="Content of each section"
     )
 

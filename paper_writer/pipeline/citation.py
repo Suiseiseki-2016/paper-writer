@@ -27,7 +27,6 @@ class CitationGenerator(PipelineComponent):
         """
         # Generate prompt using the format_prompt function from utils.prompts
         paper = self._parse_reference(paper)
-        print(f"new_references:\n{paper.references}")
         paper = self._generate_citation_sentences(paper)
         
 
