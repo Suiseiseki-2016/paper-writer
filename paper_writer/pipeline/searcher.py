@@ -42,7 +42,8 @@ class SearcherGenerator(PipelineComponent):
 
         # Update the paper object
         paper.references = section_searchers
-        
+        print(f"references:\n{paper.references}")
+
         return paper
     
     def _generate_searchers_for_section(self, paper: PaperBase, section: str) -> List[ReferencePaperBase]:

@@ -23,19 +23,25 @@ class CitationGenerator(PipelineComponent):
             paper: Input PaperBase object with title, description, and references
             
         Returns:
-            Modified PaperBase object with updated search results
+            Modified PaperBase object with updated citations
         """
         # Generate prompt using the format_prompt function from utils.prompts
         paper = self._parse_reference(paper)
+        print(f"new_references:\n{paper.references}")
         paper = self._generate_citation_sentences(paper)
         
 
         # Generate citations
         # citations_response = self.model.query(prompt)
+        print(f"citation:\n{paper.citation_content}")
         return paper
 
     def _parse_reference(self, paper: PaperBase) -> PaperBase:
-
+        
+        """
+        从references中提取出有效的references
+        """
+        
         for section, searchers in paper.references.items():
             new_references = []
             references = ''
@@ -48,8 +54,15 @@ class CitationGenerator(PipelineComponent):
             response_results = self._parse_references_response(new_references_response)
             
             for index, result in response_results.items():
-                searchers[int(index) - 1].reference = result
-                new_references.append(searchers[int(index) - 1])
+                # 判断是否全为正整数，如果不是，则提取其中数字部分
+                if index.isdigit():
+                    index_int = int(index)
+                else:
+                    # 提取所有数字字符
+                    digits = [c for c in index if c.isdigit()]
+                    index_int =  int(''.join(digits)) if digits else None
+                searchers[index_int - 1].reference = result
+                new_references.append(searchers[index_int - 1])
 
             paper.references[section] = new_references
 

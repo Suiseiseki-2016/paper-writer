@@ -28,7 +28,7 @@ class DescriptionGenerator(PipelineComponent):
         
         # Update the paper object
         paper.description = new_description
-        print(paper.description)
+        print(f"description:\n{paper.description}")
 
         return paper 
 if __name__=="__main__":
