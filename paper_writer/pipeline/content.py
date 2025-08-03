@@ -23,11 +23,11 @@ class ContentGenerator(PipelineComponent):
         """
 
         paper = self._generate_section_content(paper)
-        
+        paper = self._generate_paper_content(paper)
 
         # Generate citations
         # citations_response = self.model.query(prompt)
-        print(f"content:\n{paper.section_content}")
+        print(f"content:\n{paper.paper_content}")
         return paper
     
     def _generate_section_content(self, paper: PaperBase) -> PaperBase:
@@ -43,9 +43,45 @@ class ContentGenerator(PipelineComponent):
         """
 
         for section in range(len(paper.outline)):
-            prompt = format_prompt("content", outline=paper.outline[section], citations=paper.citation_content[section])
+            citation_str = ""
+
+            for i in range(len(paper.citation_content[section])):
+                citation_str = citation_str + f"<citation_{i+1}> {paper.citation_content[section][i].citation_sentence}\n"
+
+            prompt = format_prompt("content", outline=paper.outline[section], citation_str=citation_str)
             content_response = self.complex_model.query(prompt)
             paper.section_content.append(content_response)
+
+        return paper
+
+    def _generate_paper_content(self, paper: PaperBase) -> PaperBase:
+        """
+        标签替换
+        reference去重及对应序号替换
+        """
+        
+        reference_index = 1
+        paper.paper_content = paper.title
+
+        for content in paper.section_content:
+            index1 = -1
+            index2 = -1
+            while True:
+                index1 = content.find('<', index2 + 1)
+                index2 = content.find('>', index1 + 1)
+                if index1 == -1:
+                    break
+                citation_index = 
+                content[index1:index2+1] = 
+                index2 += len()
+            paper.paper_content = paper.paper_content + content
+        
+        paper.paper_content = paper.paper_content + 'References\n'
+        
+        for section_references in paper.references.values():
+            for reference in section_references:
+                paper.paper_content = paper.paper_content + '[{reference_index}] ' + reference.reference
+                reference_index += 1
 
         return paper
 
