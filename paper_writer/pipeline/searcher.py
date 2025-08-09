@@ -3,7 +3,7 @@ from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
 from paper_writer.utils.crawler import crawl_url
 from paper_writer.utils.text import full_clean_pipeline
-from typing import List, Dict
+from typing import List
 import re
 
 class SearcherGenerator(PipelineComponent):
@@ -29,23 +29,23 @@ class SearcherGenerator(PipelineComponent):
             raise ValueError("Paper must have an outline before generating search results")
         
         # Generate search results for each section
-        section_searchers = {}
+        section_searchers = []
         
         for section in paper.outline:
             # Generate search results for this specific section
             section_searchers_list = self._generate_searchers_for_section(paper, section)
-            section_searchers[section] = section_searchers_list
+            section_searchers.append(section_searchers_list)
 
-        for section, searchers in section_searchers.items():
-            searchers = self._crawl_urls_texts(searchers)
-            section_searchers[section] = self._generate_references_from_texts(searchers)
+        for i in range(len(section_searchers)):
+            section_searchers[i] = self._crawl_urls_texts(section_searchers[i])
+            section_searchers[i] = self._generate_references_from_texts(section_searchers[i])
 
         # Update the paper object
         paper.references = section_searchers
 
         print('references:\n')
-        for value in paper.references.values():
-            for reference in value:
+        for section_referecnces in paper.references:
+            for reference in section_referecnces:
                 print(reference.reference)
 
         return paper

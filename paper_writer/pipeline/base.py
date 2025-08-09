@@ -19,9 +19,9 @@ class PaperBase(BaseModel):
     title: str = Field(default="", description="Title of the paper")
     description: str = Field(default="", description="Brief description of the paper")
     outline: List[str] = Field(default_factory=list, description="Main outline points of the paper")
-    references: Dict[str, List[ReferencePaperBase]] = Field(
-        default_factory=dict, 
-        description="Dict of section: references"
+    references: List[List[ReferencePaperBase]] = Field(
+        default_factory=list,
+        description="References in each section"
     )
     citation_content: List[List[CitationBase]] = Field(
         default_factory=list,
