@@ -6,7 +6,7 @@ from paper_writer.pipeline.citation import CitationGenerator
 from paper_writer.pipeline.content import ContentGenerator
 
 
-def main():
+def main_test():
     print("Hello from paper-writer!")
     a = DescriptionGenerator()
     b = OutlineGenerator()
@@ -21,17 +21,11 @@ def main():
 
     paper = b.process(paper)
 
-    try:
-        paper = c.process(paper)
-    except:
-        paper = c.process(paper)
+    paper = c.process(paper)
 
-    try:
-        paper = d.process(paper)
-    except:
-        paper = d.process(paper)
+    paper = d.process(paper)
 
     paper = e.process(paper)
 
 if __name__ == "__main__":
-    main()
+    main_test()

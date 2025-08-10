@@ -1,5 +1,6 @@
 import json
 import re
+import pickle
 from paper_writer.pipeline.base import PipelineComponent, PaperBase
 from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
@@ -111,4 +112,6 @@ By synthesizing diverse research threads, this survey aims to accelerate innovat
 *Note*: The description maintains an academic tone with clear section demarcations, logical flow, and emphasis on both theoretical and practical insights. It balances breadth (coverage of methods) and depth (critical analysis) while aligning with the title’s focus on a *review/survey* paper.
     '''
     paper = a.process(paper)
+    with open('data.pkl', 'wb') as f:
+        pickle.dump(paper, f)
     print(f"outline:\n{paper.outline}")

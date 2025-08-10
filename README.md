@@ -1,3 +1,2 @@
-1. 重构references为list
-2. 完善content中标签替换
-3. 考虑reference去重和对应的序号改变
+1. 在content.py中生成的段落中参考文献不一定按照顺序引用，目前的引用顺序不对，且不一定全部被引用.
+2. 考虑reference去重

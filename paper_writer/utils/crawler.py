@@ -11,7 +11,10 @@ def crawl_url(url: str) -> str:
     - PDF: 解析为文本并转为 markdown
     返回 markdown 文本，若失败抛出异常。
     """
-    resp = requests.get(url, timeout=10)
+    try:
+        resp = requests.get(url, timeout=10)
+    except:
+        return ''
     try:
         resp.raise_for_status()
     except:

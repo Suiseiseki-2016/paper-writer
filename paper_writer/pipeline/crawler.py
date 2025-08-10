@@ -1,6 +1,6 @@
+import re
 from paper_writer.pipeline.base import PipelineComponent, PaperBase
 from typing import Dict
-import re
 from paper_writer.utils.crawler import crawl_url
 
 class CrawlerComponent(PipelineComponent):

@@ -1,10 +1,11 @@
+import re
+import pickle
 from paper_writer.pipeline.base import PipelineComponent, PaperBase, ReferencePaperBase
 from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
 from paper_writer.utils.crawler import crawl_url
 from paper_writer.utils.text import full_clean_pipeline
 from typing import List
-import re
 
 class SearcherGenerator(PipelineComponent):
     """Pipeline component that generates search results for each section in the outline."""
@@ -109,6 +110,7 @@ class SearcherGenerator(PipelineComponent):
         
         """
         Generate references from crawled texts.
+        提取<>内的内容作为reference，并过滤空值
         
         Args:
             searchers
@@ -116,17 +118,24 @@ class SearcherGenerator(PipelineComponent):
         Returns:
             List of references for the section
         """
-                
+        new_searchers = []
+
         for searcher in searchers:
             reference_prompt = format_prompt("reference", text=searcher.text)
             reference_response = self.simple_model.query(reference_prompt)
-            searcher.reference = reference_response
-
-        return searchers
+            index1, index2 = 0, 0
+            index1 = reference_response.find('<', index1)
+            index2 = reference_response.find('>', index1)
+            reference = reference_response[index1 + 1: index2]
+            if reference:
+                new_searchers.append(ReferencePaperBase(url=searcher.url, text=searcher.text, reference=reference))
+        return new_searchers
 
 if __name__=="__main__":
     a = SearcherGenerator()
-    paper = PaperBase()
+    with open('/home/xfeng/pw0725/paper-writer/paper_writer/examples/outline.pkl', 'rb') as f:
+        paper = pickle.load(f)
+    """paper = PaperBase()
     paper.title = '移动机器人覆盖路径规划算法综述'
     paper.description = '''
 **Comprehensive Description of "移动机器人覆盖路径规划算法综述"**  
@@ -163,5 +172,8 @@ By synthesizing diverse research threads, this survey aims to accelerate innovat
 *Note*: The description maintains an academic tone with clear section demarcations, logical flow, and emphasis on both theoretical and practical insights. It balances breadth (coverage of methods) and depth (critical analysis) while aligning with the title's focus on a *review/survey* paper.
     '''
     paper.outline = ["Introduction:1. Definition and importance of Coverage Path Planning (CPP) in mobile robotics.\n2. Key objectives of CPP: complete coverage, obstacle avoidance, and energy efficiency.\n3. Overview of application areas such as floor cleaning, agricultural monitoring, and industrial inspection.\n4. Purpose and scope of the survey paper: systematic classification and analysis of CPP algorithms.\n5. Outline of the paper's structure and key contributions.",'Literature Review:1. Historical evolution of CPP algorithms, from early heuristic methods to modern data-driven approaches.\n2. Classification of CPP algorithms into categories: cellular decomposition, graph-based, potential field, neural network, and evolutionary algorithms.\n3. Comparative analysis of seminal works in each category, highlighting milestones and paradigm shifts.\n4. Discussion of application-specific adaptations, such as dynamic environments or multi-robot systems.\n5. Identification of gaps in existing literature and unresolved challenges in CPP research.','Methodology:1. Conceptual framing of CPP as an optimization problem, including key metrics like coverage rate and path length.\n2. Description of the review methodology: systematic collection and categorization of CPP algorithms.\n3. Criteria for comparative analysis: computational complexity, adaptability, scalability, and practical implementation.\n4. Selection of representative algorithms from each category for in-depth evaluation.\n5. Approach to synthesizing trends and emerging patterns in CPP research.']
+""" 
     paper = a.process(paper)
-    print(f"references:\n{paper.references}")
+    #print(f"references:\n{paper.references}")
+    with open('/home/xfeng/pw0725/paper-writer/paper_writer/examples/searcher.pkl', 'wb') as f:
+        pickle.dump(paper, f)

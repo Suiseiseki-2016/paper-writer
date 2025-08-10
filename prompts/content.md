@@ -1,6 +1,6 @@
-According to the following outline, please expand the following sentences into a paragraph of 300-500 words in Chinese, and ensure that the sentences appear as independent sentences within it.. Please replace the sentences in the paragraph with an expression in the format of <citation_1>. Please only return the paragraph without any other texts.
+Using the provided outline and citations, compose a 300-500 word passage in Chinese following the alternating structure of "Expository text. Citation1. Expository text. Citation2. Expository text.". Each citation should only appear once in the passage. Please replace the citations in the passage with an expression in the format of <citation_1>. Please only return the passage without any other texts.
 
 Outline: {outline}
-Sentences: {citation_str}
+citations: {citation_str}
 
 
