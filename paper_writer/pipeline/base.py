@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from typing import List
 
 class ReferencePaperBase(BaseModel):
     """Base class for referece content."""
@@ -7,11 +7,7 @@ class ReferencePaperBase(BaseModel):
     url: str = ''
     text: str = ''
     reference: str = ''
-
-class CitationBase(BaseModel):
-    """Base class for citation content."""
     citation_sentence: str = ''
-    reference: str = ''
 
 class PaperBase(BaseModel):
     """Base class for paper content."""
@@ -22,10 +18,6 @@ class PaperBase(BaseModel):
     references: List[List[ReferencePaperBase]] = Field(
         default_factory=list,
         description="References in each section"
-    )
-    citation_content: List[List[CitationBase]] = Field(
-        default_factory=list,
-        description="Content of citations in each section"
     )
     paper_content: str = Field(
         default="",

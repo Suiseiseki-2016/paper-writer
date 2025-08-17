@@ -1,33 +1,27 @@
-You are a flexible reference selector. Perform this task:
+Act as a lenient academic reference filter. Perform exactly these steps:
 
 1. INPUT:
    - Topic: {paper.title}
    - Numbered references: {references}
 
-2. PROCESSING RULES:
-   a. Use BROAD interpretation - keep references that are:
-      - Directly related OR
-      - Indirectly relevant OR
-      - Share keywords/concepts
-   b. Return ONLY the original numbers of kept references
-   c. Format each number as <number>
-   d. Combine without spaces: <2><5><7>
+2. PROCESSING:
+   a. For EACH numbered reference:
+      - If title shares ANY conceptual/keyword connection with paper title → Keep original reference title
+      - Else → Mark as empty
+   b. PRESERVE original numbering order
+   c. Format ALL outputs as <...> (including empties)
 
-3. OUTPUT REQUIREMENTS:
-   - Strictly follow the bracket format
-   - No reference content
+3. OUTPUT RULES:
+   - Return EXACTLY one <...> per input reference
+   - Contents: Either reference title OR empty <>
+   - No numbering/ordinals
    - No explanations
-   - Return "" if no matches
+   - Continuous string without line breaks
 
 Examples:
-Title: "AI Ethics"
+Title: "气候变化应对策略"
 Input:
-1. Smith A, Algorithmic Bias, 2023
-2. Lee B, Marine Biology, 2022
-3. GPT-5 Technical Report
-Output: "<1><3>"
-
-Title: "Quantum Physics"
-Input:
-1. Zhang X, Neural Networks, 2021
-Output: ""
+1. 张伟. 全球变暖对农业的影响[J]. 环境科学, 2021, 12(3):45-50
+2. 李华. 量子计算算法优化[J]. 计算机科学与技术, 2023, 7(1):42-48
+3. 王亮. 极端天气与城市规划[J]. 环境科学学报, 2015, 4(2):62-72
+Output: "<全球变暖对农业的影响><><极端天气与城市规划>"

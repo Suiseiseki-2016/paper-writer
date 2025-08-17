@@ -112,6 +112,6 @@ By synthesizing diverse research threads, this survey aims to accelerate innovat
 *Note*: The description maintains an academic tone with clear section demarcations, logical flow, and emphasis on both theoretical and practical insights. It balances breadth (coverage of methods) and depth (critical analysis) while aligning with the title’s focus on a *review/survey* paper.
     '''
     paper = a.process(paper)
-    with open('data.pkl', 'wb') as f:
-        pickle.dump(paper, f)
     print(f"outline:\n{paper.outline}")
+    with open('/home/xfeng/pw0725/paper-writer/paper_writer/examples/outline.pkl', 'wb') as f:
+        pickle.dump(paper, f)
