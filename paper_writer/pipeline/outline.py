@@ -1,5 +1,6 @@
 import json
 import re
+import pickle
 from paper_writer.pipeline.base import PipelineComponent, PaperBase
 from paper_writer.utils.model import load_models
 from paper_writer.utils.prompts import format_prompt
@@ -34,7 +35,7 @@ class OutlineGenerator(PipelineComponent):
         
         # Update the paper object
         paper.outline = outline_sections
-        
+        print(f"outline:\n{paper.outline}")
         return paper
     
     def _parse_outline_response(self, response: str) -> list:
@@ -59,9 +60,13 @@ class OutlineGenerator(PipelineComponent):
                 results = json.loads(json_match.group(0))
             else:
                 return []
-
         for key, section in results.items():
             key = key.strip()
+            
+            # 判断section是否为list，如果是，则用\n拼接为字符串
+            if isinstance(section, list):
+                section =  '\n'.join(str(x) for x in section)
+
             section = section.strip()
             outline_sections.append(f"{key}:{section}")
         
@@ -108,3 +113,5 @@ By synthesizing diverse research threads, this survey aims to accelerate innovat
     '''
     paper = a.process(paper)
     print(f"outline:\n{paper.outline}")
+    with open('/home/xfeng/pw0725/paper-writer/paper_writer/examples/outline.pkl', 'wb') as f:
+        pickle.dump(paper, f)

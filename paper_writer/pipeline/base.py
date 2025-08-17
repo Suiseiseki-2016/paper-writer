@@ -1,5 +1,13 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from typing import List
+
+class ReferencePaperBase(BaseModel):
+    """Base class for referece content."""
+    title: str = ''
+    url: str = ''
+    text: str = ''
+    reference: str = ''
+    citation_sentence: str = ''
 
 class PaperBase(BaseModel):
     """Base class for paper content."""
@@ -7,28 +15,16 @@ class PaperBase(BaseModel):
     title: str = Field(default="", description="Title of the paper")
     description: str = Field(default="", description="Brief description of the paper")
     outline: List[str] = Field(default_factory=list, description="Main outline points of the paper")
-    section_outline: Dict[str, List[str]] = Field(
-        default_factory=dict, 
-        description="Detailed outline for each section"
-    )
-    citations: List[str] = Field(
-        default_factory=list, 
-        description="List of citation references"
-    )
-    citation_content: Dict[str, str] = Field(
-        default_factory=dict,
-        description="Content of each citation"
-    )
-    citation_sentence: Dict[str, List[str]] = Field(
-        default_factory=dict,
-        description="Sentences using each citation"
+    references: List[List[ReferencePaperBase]] = Field(
+        default_factory=list,
+        description="References in each section"
     )
     paper_content: str = Field(
         default="",
         description="Complete paper content"
     )
-    section_content: Dict[str, str] = Field(
-        default_factory=dict,
+    section_content: List[str] = Field(
+        default_factory=list,
         description="Content of each section"
     )
 
@@ -70,4 +66,6 @@ class PipelineComponent:
             Modified PaperBase object
         """
         return self.process(paper)
+    
+    
 
